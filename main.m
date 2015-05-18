@@ -226,8 +226,14 @@ void printCertificate(NSDictionary *certificateItem) {
 	printToStdOut(@"Serial Number: %@\n", [certificateItem objectForKey:(id)kSecAttrSerialNumber]);
 	printToStdOut(@"Subject Key ID: %@\n", [certificateItem objectForKey:(id)kSecAttrSubjectKeyID]);
 	printToStdOut(@"Subject Key Hash: %@\n\n", [certificateItem objectForKey:(id)kSecAttrPublicKeyHash]);
-	
 }
+
+NSString *saveDataTemporarily(NSString *name, NSData *data) {
+	NSString *tmpPath = [NSString stringWithFormat:@"/tmp/data.%@", name];
+	[data writeToFile:tmpPath atomically:YES];
+	return tmpPath;
+}
+
 
 void printKey(NSDictionary *keyItem) {
 	NSString *keyClass = @"Unknown";
@@ -260,6 +266,8 @@ void printKey(NSDictionary *keyItem) {
 	printToStdOut(@"For Key Wrapping: %@\n", CFBooleanGetValue((CFBooleanRef)[keyItem objectForKey:(id)kSecAttrCanWrap]) == true ? @"True" : @"False");
 	printToStdOut(@"For Key Unwrapping: %@\n\n", CFBooleanGetValue((CFBooleanRef)[keyItem objectForKey:(id)kSecAttrCanUnwrap]) == true ? @"True" : @"False");
 
+
+    saveDataTemporarily([keyItem objectForKey:(id)kSecAttrApplicationLabel], keyItem[@"v_Data"]);
 }
 
 void printIdentity(NSDictionary *identityItem) {
@@ -315,7 +323,7 @@ int main(int argc, char **argv)
 	}
 	
 	NSArray *keychainItems = nil;
-	for (id *kSecClassType in (NSArray *) arguments) {
+	for (id kSecClassType in (NSArray *) arguments) {
 		keychainItems = getKeychainObjectsForSecClass((CFTypeRef)kSecClassType);
 		printResultsForSecClass(keychainItems, (CFTypeRef)kSecClassType);
 		[keychainItems release];	

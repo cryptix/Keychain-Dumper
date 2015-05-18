@@ -14,10 +14,11 @@ TOOLCHAIN_DIR=$(ROOT)/toolchain
 SYSROOT = $(ROOT)/sdk
 
 BIN=$(TOOLCHAIN_DIR)/usr/bin
-GCC_BIN = $(BIN)/gcc
+#GCC_BIN = $(BIN)/gcc
+GCC_BIN = /usr/bin/clang
 
 
-ARCH_FLAGS=-arch armv6
+ARCH_FLAGS=-arch armv7
 LDFLAGS	=\
 	-F./sdk/System/Library/Frameworks/\
 	-F./sdk/System/Library/PrivateFrameworks/\
@@ -30,7 +31,7 @@ LDFLAGS	=\
 	-lsqlite3\
 	-bind_at_load
 
-GCC_ARM = $(GCC_BIN) -Os -Wimplicit -isysroot $(SYSROOT) $(ARCH_FLAGS)
+GCC_ARM = $(GCC_BIN) -miphoneos-version-min=7.0 -Os -Wimplicit -isysroot $(SYSROOT) $(ARCH_FLAGS)
 
 default: main.o 
 	$(GCC_ARM) $(LDFLAGS) main.o -o keychain_dumper
