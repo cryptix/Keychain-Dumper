@@ -226,12 +226,9 @@ void printCertificate(NSDictionary *certificateItem) {
 	printToStdOut(@"Serial Number: %@\n", [certificateItem objectForKey:(id)kSecAttrSerialNumber]);
 	printToStdOut(@"Subject Key ID: %@\n", [certificateItem objectForKey:(id)kSecAttrSubjectKeyID]);
 	printToStdOut(@"Subject Key Hash: %@\n\n", [certificateItem objectForKey:(id)kSecAttrPublicKeyHash]);
-}
 
-NSString *saveDataTemporarily(NSString *name, NSData *data) {
-	NSString *tmpPath = [NSString stringWithFormat:@"/tmp/data.%@", name];
-	[data writeToFile:tmpPath atomically:YES];
-	return tmpPath;
+	NSString *tmpPath = [NSString stringWithFormat:@"/tmp/data.%@.crt", [certificateItem objectForKey:(id)kSecAttrApplicationLabel]];
+	[certificateItem[@"certdata"] writeToFile:tmpPath atomically:YES];
 }
 
 
@@ -267,7 +264,9 @@ void printKey(NSDictionary *keyItem) {
 	printToStdOut(@"For Key Unwrapping: %@\n\n", CFBooleanGetValue((CFBooleanRef)[keyItem objectForKey:(id)kSecAttrCanUnwrap]) == true ? @"True" : @"False");
 
 
-    saveDataTemporarily([keyItem objectForKey:(id)kSecAttrApplicationLabel], keyItem[@"v_Data"]);
+
+    NSString *tmpPath = [NSString stringWithFormat:@"/tmp/data.%@.key", [keyItem objectForKey:(id)kSecAttrApplicationLabel]];
+	[keyItem[@"v_Data"] writeToFile:tmpPath atomically:YES];
 }
 
 void printIdentity(NSDictionary *identityItem) {
